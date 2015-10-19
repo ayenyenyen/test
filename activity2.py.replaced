@@ -380,9 +380,6 @@ def ackermann(m, n):
 #print(ackermann(3, 6))
 
 
-# Exercise 11.8 is very difficult. :3
-
-
 # Exercise 11.9
 def has_dups(myList):
     dictionary = {}
@@ -539,8 +536,9 @@ def sort_by_length_random(words):
 words = ['Lemuel', 'Jay', 'Zoemar', 'Vince', 'George', 'Georges']
 
 t = sort_by_length_random(words)
-for x in t:
-    print(x)
+#print('Exercise 12.3.:')
+#for x in t:
+#    print(x)
 
 # Exercise 12.3
 text = 'The rain in Spain falls mainly on the plains!!!!'
@@ -658,6 +656,7 @@ book = 'words.txt'
 with open(book, 'r') as fd:
     words = fd.read().split()
 
+
 def clean(word):
     cleansed = ''
     for char in word:
@@ -670,9 +669,211 @@ def clean(word):
 #print("{} has {} 'words'".format(book, len([clean(word) for word in words])))
 
 # Exercise 13.2
+origin = 'origin.txt'
+huck = 'huck.txt'
+frank = 'frank.txt'
+great = 'great.txt'
+meta = 'meta.txt'
+sherlock = 'sherlock.txt'
+tale = 'tale.txt'
+
+
+def words(book):
+    list_ = []
+    flag = False
+    signal = "*** START OF"
+    for line in book:
+        if flag == True:
+            for word in line.split():
+                list_.append(word)
+        elif (signal in line) and (flag == False):
+            flag = True
+        else:
+            pass
+    return list_
+
+
+def clean(word):
+    result = ''
+    for letter in word:
+        if (letter in whitespace) or (letter in punctuation):
+            pass
+        else:
+            result += letter.lower()
+    return result
+
+
+def histogram(data):
+    hist = {}
+    for word in data:
+        hist[word] = hist.get(word, 0) + 1
+    return hist
+
+books = [origin, huck, frank, great, meta, sherlock, tale]
+
+
+def stats():
+    for book in books:
+        book = open(book, 'r')
+        print("Stats for %s:" % book.name)
+        data = [clean(word) for word in words(book)]
+        book.close()
+        print("  Total: %s" % len(data))
+        print("  Unique: %s" % len(histogram(data)))
+
+#stats()
+
+
 # Exercise 13.3
+origin = 'origin.txt'
+huck = 'huck.txt'
+frank = 'frank.txt'
+great = 'great.txt'
+meta = 'meta.txt'
+sherlock = 'sherlock.txt'
+tale = 'tale.txt'
+
+books = [origin, huck, frank, great, meta, sherlock, tale]
+
+
+def words(book):
+    list_ = []
+    flag = False
+    signal = "*** START OF"
+    op = open(book, 'r')
+    for line in op:
+        if flag == True:
+            for word in line.split():
+                list_.append(word)
+        elif (signal in line) and (flag == False):
+            flag = True
+        else:
+            pass
+    op.close()
+    return list_
+
+
+def clean(word):
+     result = ''
+     for char in word:
+         if (char in whitespace) or (char in punctuation):
+             pass
+         else:
+             result += char.lower()
+     return result
+
+def histogram(data):
+     hist = {}
+     for word in data:
+         if word == '':
+             pass
+         else:
+             hist[word] = hist.get(word, 0) + 1
+     return hist
+
+#print('Exercise 13.3')
+#for book in books:
+#    data = [clean(word) for word in words(book)]
+#    print("Stats for %s:" % book)
+#    hist = histogram(data)
+#    top20 = []
+#    for key in hist:
+#        top20.append([hist[key], key])
+#    top20.sort(reverse=True)
+#    for i in range(0, 20):
+#        print("  %s) %s %s" % (i + 1, top20[i][1], top20[i][0]))
+#        print("\n")
+
+
 # Exercise 13.4
+origin = 'origin.txt' # Origin of Species, 1859
+huck = 'huck.txt' # Huck Finn, 1884
+don = 'don.txt' # Don Quixote, 1605
+great = 'great.txt' # Expectations, 1860
+meta = 'meta.txt' # morphisis, 1915
+sherlock = 'sherlock.txt' # 1887
+divine = 'divine.txt' # Comedy, 1308
+journey = 'journey.txt'  # to the center of the earth, 1864
+
+word_file = 'words.txt'
+books = [origin, huck, don, great, meta, sherlock, divine, journey]
+
+
+def words(book):
+    list_ = []
+    flag = False
+    signal = "*** START OF"
+    for line in book:
+        if flag == True:
+            for word in line.split():
+                list_.append(word)
+        elif (signal in line) and (flag == False):
+            flag = True
+        else:
+            pass
+    return list_
+
+
+def clean(word):
+    result = ''
+    for char in word:
+        if (char in whitespace) or (char in punctuation):
+            pass
+        elif not char.isalpha():
+            pass
+        else:
+            result += char.lower()
+    return result
+
+
+def stats():
+    for book in books:
+        book_words = set([clean(word) for word in words(open(book, 'r'))])
+        words_ = set([word for word in open(word_file, 'r')])
+        print("Stats for %s" % open(book, 'r').name)
+        print("  There are %s non-listed words." % len(book_words - words_))
+
+#print('Exercise 13.4')
+#stats()
+#print("\n\nThe words not in the word list for origin.txt:")
+#print(set([clean(word) for word in words(open(origin, 'r'))]) -
+#      set([word for word in open(word_file, 'r')]))
+
+
+
 # Exercise 13.5
+import random
+
+t = ['a', 'a', 'b']
+
+def hist(x):
+    hist = {}
+    for item in x:
+        hist[item] = hist.get(item, 0) + 1
+    return hist
+
+hist = hist(t)
+
+def choose_from_hist(hist):
+    list_ = []
+    for key in hist:
+        for i in range(0, hist[key]):
+            list_.append(key)
+    return random.choice(list_)
+
+def stats():
+    a = 0
+    b = 0
+    for i in range(0, 10000):
+        if choose_from_hist(hist) == 'a':
+            a += 1
+        else:
+            b += 1
+    print("a: %.5f" % (a / 10000.0), "b: %.5f" % (b / 10000.0))
+
+print('Exercise 13.5:')
+stats()
+
 # Exercise 13.6
 # Exercise 13.7
 # Exercise 13.8
@@ -860,9 +1061,30 @@ def print_duplicates(d):
                 print('And they are identical.')
 
 
-# Exercise 14.5
+# Exercise 14.6
 
 
+# Exercise 15.1
+import math
+
+
+class Point(object):
+
+    point_one = Point()
+    point_two = Point()
+
+    point_one.x, point_one.y = 6.0, 1.0
+    point_two.x, point_two.y = 2.0, 6.0
+
+
+    def distance(p1, p2):
+        delta_x = p2.x - p1.x
+        delta_y = p2.y - p1.y
+        return math.sqrt(delta_x ** 2 + delta_y ** 2)
+
+    print("The distance between point one at (%g,%g)" % (point_one.x, point_one.y))
+    print("and point two at (%g,%g)" % (point_two.x, point_two.y))
+    print("is %.3f" % distance(point_one, point_two))
 
 # Exercise 16.1
 

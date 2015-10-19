@@ -380,9 +380,6 @@ def ackermann(m, n):
 #print(ackermann(3, 6))
 
 
-# Exercise 11.8 is very difficult. :3
-
-
 # Exercise 11.9
 def has_dups(myList):
     dictionary = {}
@@ -659,6 +656,7 @@ book = 'words.txt'
 with open(book, 'r') as fd:
     words = fd.read().split()
 
+
 def clean(word):
     cleansed = ''
     for char in word:
@@ -671,9 +669,211 @@ def clean(word):
 #print("{} has {} 'words'".format(book, len([clean(word) for word in words])))
 
 # Exercise 13.2
+origin = 'origin.txt'
+huck = 'huck.txt'
+frank = 'frank.txt'
+great = 'great.txt'
+meta = 'meta.txt'
+sherlock = 'sherlock.txt'
+tale = 'tale.txt'
+
+
+def words(book):
+    list_ = []
+    flag = False
+    signal = "*** START OF"
+    for line in book:
+        if flag == True:
+            for word in line.split():
+                list_.append(word)
+        elif (signal in line) and (flag == False):
+            flag = True
+        else:
+            pass
+    return list_
+
+
+def clean(word):
+    result = ''
+    for letter in word:
+        if (letter in whitespace) or (letter in punctuation):
+            pass
+        else:
+            result += letter.lower()
+    return result
+
+
+def histogram(data):
+    hist = {}
+    for word in data:
+        hist[word] = hist.get(word, 0) + 1
+    return hist
+
+books = [origin, huck, frank, great, meta, sherlock, tale]
+
+
+def stats():
+    for book in books:
+        book = open(book, 'r')
+        print("Stats for %s:" % book.name)
+        data = [clean(word) for word in words(book)]
+        book.close()
+        print("  Total: %s" % len(data))
+        print("  Unique: %s" % len(histogram(data)))
+
+#stats()
+
+
 # Exercise 13.3
+origin = 'origin.txt'
+huck = 'huck.txt'
+frank = 'frank.txt'
+great = 'great.txt'
+meta = 'meta.txt'
+sherlock = 'sherlock.txt'
+tale = 'tale.txt'
+
+books = [origin, huck, frank, great, meta, sherlock, tale]
+
+
+def words(book):
+    list_ = []
+    flag = False
+    signal = "*** START OF"
+    op = open(book, 'r')
+    for line in op:
+        if flag == True:
+            for word in line.split():
+                list_.append(word)
+        elif (signal in line) and (flag == False):
+            flag = True
+        else:
+            pass
+    op.close()
+    return list_
+
+
+def clean(word):
+     result = ''
+     for char in word:
+         if (char in whitespace) or (char in punctuation):
+             pass
+         else:
+             result += char.lower()
+     return result
+
+def histogram(data):
+     hist = {}
+     for word in data:
+         if word == '':
+             pass
+         else:
+             hist[word] = hist.get(word, 0) + 1
+     return hist
+
+#print('Exercise 13.3')
+#for book in books:
+#    data = [clean(word) for word in words(book)]
+#    print("Stats for %s:" % book)
+#    hist = histogram(data)
+#    top20 = []
+#    for key in hist:
+#        top20.append([hist[key], key])
+#    top20.sort(reverse=True)
+#    for i in range(0, 20):
+#        print("  %s) %s %s" % (i + 1, top20[i][1], top20[i][0]))
+#        print("\n")
+
+
 # Exercise 13.4
+origin = 'origin.txt' # Origin of Species, 1859
+huck = 'huck.txt' # Huck Finn, 1884
+don = 'don.txt' # Don Quixote, 1605
+great = 'great.txt' # Expectations, 1860
+meta = 'meta.txt' # morphisis, 1915
+sherlock = 'sherlock.txt' # 1887
+divine = 'divine.txt' # Comedy, 1308
+journey = 'journey.txt'  # to the center of the earth, 1864
+
+word_file = 'words.txt'
+books = [origin, huck, don, great, meta, sherlock, divine, journey]
+
+
+def words(book):
+    list_ = []
+    flag = False
+    signal = "*** START OF"
+    for line in book:
+        if flag == True:
+            for word in line.split():
+                list_.append(word)
+        elif (signal in line) and (flag == False):
+            flag = True
+        else:
+            pass
+    return list_
+
+
+def clean(word):
+    result = ''
+    for char in word:
+        if (char in whitespace) or (char in punctuation):
+            pass
+        elif not char.isalpha():
+            pass
+        else:
+            result += char.lower()
+    return result
+
+
+def stats():
+    for book in books:
+        book_words = set([clean(word) for word in words(open(book, 'r'))])
+        words_ = set([word for word in open(word_file, 'r')])
+        print("Stats for %s" % open(book, 'r').name)
+        print("  There are %s non-listed words." % len(book_words - words_))
+
+#print('Exercise 13.4')
+#stats()
+#print("\n\nThe words not in the word list for origin.txt:")
+#print(set([clean(word) for word in words(open(origin, 'r'))]) -
+#      set([word for word in open(word_file, 'r')]))
+
+
+
 # Exercise 13.5
+import random
+
+t = ['a', 'a', 'b']
+
+def hist(x):
+    hist = {}
+    for item in x:
+        hist[item] = hist.get(item, 0) + 1
+    return hist
+
+hist = hist(t)
+
+def choose_from_hist(hist):
+    list_ = []
+    for key in hist:
+        for i in range(0, hist[key]):
+            list_.append(key)
+    return random.choice(list_)
+
+def stats():
+    a = 0
+    b = 0
+    for i in range(0, 10000):
+        if choose_from_hist(hist) == 'a':
+            a += 1
+        else:
+            b += 1
+    print("a: %.5f" % (a / 10000.0), "b: %.5f" % (b / 10000.0))
+
+print('Exercise 13.5:')
+stats()
+
 # Exercise 13.6
 # Exercise 13.7
 # Exercise 13.8
@@ -861,19 +1061,484 @@ def print_duplicates(d):
                 print('And they are identical.')
 
 
-# Exercise 14.5
+# Exercise 14.6
 
 
+# Exercise 15.1
+import math
+
+
+class Point(object):
+    """Represents a point in 2d space."""
+
+point_one = Point()
+point_two = Point()
+
+point_one.x, point_one.y = 6.0, 1.0
+point_two.x, point_two.y = 2.0, 6.0
+
+
+def distance(p1, p2):
+    """Returns the distance between two points in 2d space."""
+    delta_x = p2.x - p1.x
+    delta_y = p2.y - p1.y
+    return math.sqrt(delta_x ** 2 + delta_y ** 2)
+
+print("The distance between point one at (%g,%g)" % (point_one.x, point_one.y))
+print("and point two at (%g,%g)" % (point_two.x, point_two.y))
+print("is %.3f" % distance(point_one, point_two))
+
+# Exercise 15.2
+class Point(object):
+    """Represents a point in 2d space"""
+
+
+class Rectangle(object):
+    """Represents a rectangle in 2d space"""
+
+rectangle = Rectangle()
+
+bottom_left = Point()
+bottom_left.x = 3.0
+bottom_left.y = 5.0
+
+top_right = Point()
+top_right.x = 5.0
+top_right.y = 10.0
+
+rectangle.corner1 = bottom_left
+rectangle.corner2 = top_right
+
+dx = 5.0
+dy = 12.0
+
+
+def move_rectangle(rectangle, dx, dy):
+    """Takes a rectangle and moves it to the values of dx and dy."""
+    print ("The rectangle started with bottom left corner at (%g,%g)"
+           % (rectangle.corner1.x, rectangle.corner1.y)),
+    print ("and top right corner at (%g,%g)."
+           % (rectangle.corner2.x, rectangle.corner2.y)),
+    print "dx is %g and dy is %g" % (dx, dy)
+    rectangle.corner1.x = rectangle.corner1.x + dx
+    rectangle.corner2.x = rectangle.corner2.x + dx
+    rectangle.corner1.y = rectangle.corner1.y + dy
+    rectangle.corner2.y = rectangle.corner2.y + dy
+    print ("It ended with a bottom left corner at (%g,%g)"
+           % (rectangle.corner1.x, rectangle.corner1.y)),
+    print ("and a top right corner at (%g,%g)"
+           % (rectangle.corner2.x, rectangle.corner2.y))
+
+move_rectangle(rectangle, dx, dy)
+
+# Exercise 15.3
+import copy
+
+
+class Point(object):
+    """Represents a point in 2d space"""
+
+
+class Rectangle(object):
+    """Represents a rectangle in 2d space"""
+
+rectangle = Rectangle()
+
+bottom_left = Point()
+bottom_left.x = 3.0
+bottom_left.y = 5.0
+
+top_right = Point()
+top_right.x = 5.0
+top_right.y = 10.0
+
+rectangle.corner1 = bottom_left
+rectangle.corner2 = top_right
+
+dx = 5.0
+dy = 12.0
+
+
+def move_rectangle(rectangle, dx, dy):
+    """Moves a trangle to the values of dx and dy using deepcopy to create
+    a new rectangle object and not modify the original rectangle."""
+    new_rectangle = copy.deepcopy(rectangle)
+    print ("Original: (%g,%g)" % (rectangle.corner1.x, rectangle.corner1.y)),
+    print ("(%g,%g)" % (rectangle.corner2.x, rectangle.corner2.y))
+    new_rectangle.corner1.x = new_rectangle.corner1.x + dx
+    new_rectangle.corner2.x = new_rectangle.corner2.x + dx
+    new_rectangle.corner1.y = new_rectangle.corner1.y + dy
+    new_rectangle.corner2.y = new_rectangle.corner2.y + dy
+    print ("New: (%g,%g)" % (new_rectangle.corner1.x,
+           new_rectangle.corner1.y)),
+    ("(%g,%g)" % (new_rectangle.corner2.x, new_rectangle.corner2.y))
+
+move_rectangle(rectangle, dx, dy)
 
 # Exercise 16.1
+class Time(object):
+    """ represents the time of day.
+    attributes: hour, minute, second"""
+
+time = Time()
+time.hour = 11
+time.minute = 59
+time.second = 30
 
 
+def print_time(time):
+    print("%.2d:%.2d:%.2d" % (time.hour, time.minute, time.second))
+
+print_time(time)
 
 # Exercise 16.2
+import time
+import datetime
 
+
+class Time(object):
+    """Time object based on datetime.datetime describes time in 24hr format"""
+    def __init__(self, year=2000, month=1, day=1, hour=12, minute=0, sec=0):
+        self.date = datetime.datetime(year, month, day, hour, minute, sec)
+
+    def mktime(self):
+        return time.mktime(self.date.timetuple())
+
+
+t1 = Time(2013, 1, 3, 15)
+t2 = Time(2013, 1, 3, 1)
+
+def is_after(time1, time2):
+    return time1.mktime() > time2.mktime()
+
+print(is_after(t1, t2))
 
 # Exercise 16.3
+class Time(object):
+    """ represents the time of day.
+    attributes: hour, minute, second"""
+
+time = Time()
+time.hour = 11
+time.minute = 59
+time.second = 30
+
+
+def increment(time, seconds):
+    print ("Original time was: %.2d:%.2d:%.2d"
+          % (time.hour, time.minute, time.second))
+
+    time.second += seconds
+    if time.second > 59:
+        quotient, remainder = divmod(time.second, 60)
+        time.minute += quotient
+        time.second = remainder
+    if time.minute > 59:
+        quotient, remainder = divmod(time.minute, 60)
+        time.hour += quotient
+        time.minute = remainder
+    if time.hour > 12:
+        time.hour -= 12
+
+    print("Plus %g seconds" % (seconds))
+    print("New time is: %.2d:%.2d:%.2d" % (time.hour, time.minute, time.second))
+
+increment(time, 300)
+
 # Exercise 16.4
+import copy
+
+
+class Time(object):
+    """ represents the time of day.
+    attributes: hour, minute, second"""
+
+time = Time()
+time.hour = 11
+time.minute = 59
+time.second = 30
+
+
+def increment(time, seconds):
+    print ("Original time was: %.2d:%.2d:%.2d"
+          % (time.hour, time.minute, time.second))
+
+    new_time = copy.deepcopy(time)
+    new_time.second += seconds
+    if new_time.second > 59:
+        quotient, remainder = divmod(new_time.second, 60)
+        new_time.minute += quotient
+        new_time.second = remainder
+    if new_time.minute > 59:
+        quotient, remainder = divmod(new_time.minute, 60)
+        new_time.hour += quotient
+        new_time.minute = remainder
+    if new_time.hour > 12:
+        new_time.hour -= 12
+
+    print("Plus %g seconds" % (seconds))
+    print(("New time is: %.2d:%.2d:%.2d"
+          % (new_time.hour, new_time.minute, new_time.second)))
+    print("memory id of object 'time': ", id(time))
+    print("memory id of object 'new_time': ", id(new_time))
+
+increment(time, 300)
+
+
+# Exercise 16.5
+import copy
+
+
+class Time(object):
+    """ represents the time of day.
+    attributes: hour, minute, second"""
+
+time = Time()
+time.hour = 11
+time.minute = 59
+time.second = 30
+
+
+def time_to_int(time):
+    minutes = time.hour * 60 + time.minute
+    seconds = minutes * 60 + time.second
+    return seconds
+
+
+def int_to_time(seconds):
+    new_time = Time()
+    minutes, new_time.second = divmod(seconds, 60)
+    time.hour, time.minute = divmod(minutes, 60)
+    return time
+
+
+def increment(time, seconds):
+    new_time = copy.deepcopy(time)
+    new_time = time_to_int(new_time) + seconds
+    new_time = int_to_time(new_time)
+    print ("New time is: %.2d:%.2d:%.2d"
+          % (new_time.hour, new_time.minute, new_time.second))
+
+increment(time, 300)
+
+# Exercise 16.6
+class Time(object):
+    """ represents the time of day.
+    attributes: hour, minute, second"""
+
+time = Time()
+time.hour = 3
+time.minute = 0
+time.second = 0
+
+
+def time_to_int(time):
+    minutes = time.hour * 60 + time.minute
+    seconds = minutes * 60 + time.second
+    return seconds
+
+
+def int_to_time(seconds):
+    new_time = Time()
+    minutes, new_time.second = divmod(seconds, 60)
+    time.hour, time.minute = divmod(minutes, 60)
+    return time
+
+
+def mul_time(time, multicand):
+    time_int = time_to_int(time) * multicand
+    new_time = int_to_time(time_int)
+    if new_time.hour > 12:
+        new_time.hour = new_time.hour % 12
+#    print ("New time is: %.2d:%.2d:%.2d"
+#    % (new_time.hour, new_time.minute, new_time.second))
+    return new_time
+
+# mul_time(time, 2)
+
+
+def race_stats(time, distance):
+    print(("The finish time was %.2d:%.2d:%.2d"
+          % (time.hour, time.minute, time.second)))
+    print("The distance was %d miles" % (distance))
+
+    average = mul_time(time, (1.0 / distance))
+
+    print(("The average is: %.2d:%.2d:%.2d per mile"
+          % (average.hour, average.minute, average.second)))
+
+race_stats(time, 3)
+
+# Exercise 16.7
+import copy
+
+# month:days in month
+rules = {1: 31,
+         2: 28,
+         3: 31,
+         4: 30,
+         5: 31,
+         6: 30,
+         7: 31,
+         8: 31,
+         9: 30,
+         10: 31,
+         11: 30,
+         12: 31}
+
+names = {1: "January",
+         2: "Feburary",
+         3: "March",
+         4: "April",
+         5: "May",
+         6: "June",
+         7: "July",
+         8: "August",
+         9: "September",
+         10: "October",
+         11: "November",
+         12: "December"}
+
+
+class Date(object):
+    """Representation of a date
+    attributes: month, day, year"""
+
+date = Date()
+date.month = 10
+date.day = 30
+date.year = 2012
+
+
+def increment_date(date, inc):
+    date_ = copy.deepcopy(date)
+
+    # adjust ui for leap year
+#    if (date_.year % 4 == 0):
+#        print "Starting: %s %s, %s (Leap year!)" \
+#        % (names[date.month], date.day, date.year)
+#    else:
+#        print "Starting: %s %s, %s" % (names[date.month], date.day, date.year)
+#    print "Moving forward %s days" %  inc
+    while True:
+
+        # adjust feb for leap year
+        rules[2] = 28
+        if (date_.year % 4 == 0):
+            rules[2] = 29
+        elif date_.month != 2:
+            pass
+
+        days_left = rules[date_.month] - date_.day
+
+        # set date_.day based on value of days_left and inc
+        if inc <= days_left:
+            date_.day += inc
+            break
+        elif inc == 0:
+            date_.day = rules[date_.month]
+            break
+        elif inc < 0:
+            date_.day = rules[date_.month] + inc
+            break
+        else:
+            inc -= rules[date_.month]
+            date_.month += 1
+
+        # increment year if month counter pushes past 12
+        if date_.month > 12:
+            date_.year += 1
+            date_.month = 1
+
+    # final adjustment of date if previous year was a leap year
+    if ((date_.year - 1) % 4 == 0) and date_.month != 2:
+        date_.day -= 1
+
+    #final ui element
+#    print "Ending: %s %s, %s" % (names[date_.month], date_.day, date_.year)
+    return date_
+
+newDate = increment_date(date, 365)
+
+print(date, "%s %s, %s" % (names[date.month], date.day, date.year))
+print(newDate, "%s %s, %s" % (names[newDate.month], newDate.day, newDate.year))
+
+
+# Exercise 16.8
+import datetime
+
+rules = {0: "Monday",
+         1: "Tuesday",
+         2: "Wednesday",
+         3: "Thursday",
+         4: "Friday",
+         5: "Saturday",
+         6: "Sunday"}
+
+
+class Time(object):
+    now = datetime.datetime.now()
+
+    def __init__(self, year=1, month=1, day=1, hour=0, minute=0, second=0):
+        self.date = datetime.datetime(year, month, day, hour, minute, second)
+
+today = Time().now
+birthday = Time(1953, 5, 24).date
+
+
+def day_of_week():
+    return "1) Today is %s" % rules[today.weekday()]
+
+
+def birthday_stats(birthday):
+    age = today.year - birthday.year
+    if (birthday.month == today.month) and (birthday.day <= today.day):
+        pass
+    elif birthday.month < today.month:
+        pass
+    else:
+        age -= 1
+
+    birthday_ = Time(today.year, birthday.month, birthday.day).date
+    till_birthday = str(birthday_ - today).split()
+
+    if len(till_birthday) > 1:
+        days = int(till_birthday[0])
+        time = till_birthday[2].split(":")
+    else:
+        days = 365
+        time = till_birthday[0].split(":")
+
+    hours = time[0]
+    mins = time[1]
+    secs = time[2][:2]
+
+    if (days < 0) and (days != 365):
+        days = 365 + days
+    elif (days == 365):
+        days = 0
+    else:
+        days = abs(days)
+
+    print ("2) You are %s years old; %sd:%sh:%sm:%ss until your next birthday."
+    % (age, days, hours, mins, secs))
+
+print(day_of_week())
+birthday_stats(birthday)
+
+# Exercise 17.1
+class Time(object):
+    def time_to_int(self):
+        minutes = time.hour * 60 + time.minute
+        seconds = minutes * 60 + time.second
+        return seconds
+
+time = Time()
+time.hour = 11
+time.minute = 59
+time.second = 30
+
+print(time.time_to_int())
 
 # Exercise 17.2
 class Point(object):
@@ -986,3 +1651,36 @@ b = Time(hour=4, minute=30)
 #print('Exercise 18.1:')
 #print(a < b)
 
+# Exercise 18.2
+class Card(object):
+    """Represents a standard playing card."""
+
+    def __init__(self, suit=0, rank=2):
+        self.suit = suit
+        self.rank = rank
+
+    suit_names = ['Clubs', 'Diamonds', 'Hearts', 'Spades']
+    rank_names = [None, 'Ace', '2', '3', '4', '5', '6', '7',
+              '8', '9', '10', 'Jack', 'Queen', 'King']
+
+    def __str__(self):
+        return '%s of %s' % (Card.rank_names[self.rank],
+                             Card.suit_names[self.suit])
+
+class Deck(object):
+  def __init__(self):
+        self.cards = []
+        for suit in range(4):
+            for rank in range(1, 14):
+                card = Card(suit, rank)
+                self.cards.append(card)
+  def __str__(self):
+        res = []
+        for card in self.cards:
+            res.append(str(card))
+        return '\n'.join(res)
+
+
+
+deck = Deck()
+deck.sort()
