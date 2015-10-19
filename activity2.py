@@ -566,7 +566,106 @@ def most_frequent(text):
 
 
 # Exercise 12.4
-# Exercise 12.5
+with open('words.txt', 'r') as fd:
+    words = fd.read().splitlines()
+
+def make_anagram_dict(word_list):
+    '''Take a list of words, return a dict with a fingerprint as the key
+    and the anagrams made from that fingerprint as the value.'''
+    anagrams = dict()
+    for word in word_list:
+        fp = ''.join(sorted(word))
+        anagrams[fp] = anagrams.get(fp, [])
+        anagrams[fp].append(word)
+
+    anagrams = {fp: anagrams[fp] for fp in anagrams if len(anagrams[fp]) > 1}
+    return anagrams
+
+anagrams = make_anagram_dict(words)
+
+def print_anagrams(anagrams):
+    '''Uses a generator to call and print 5 items from mydict'''
+    fp = (fp for fp in anagrams)
+
+    print "Sample from anagram dict:"
+    for i in range(1, 6):
+        # call once, print twice
+        fp_next = fp.next()
+        print "%s) %s:" % (i, fp_next), anagrams[fp_next]
+
+    print "..."
+    print "\n"
+
+
+print_anagrams(anagrams)
+
+
+def sort_anagrams(anagrams):
+    '''Returns a list of lists containing all anagram matches. The longest list
+     (most anagrams) is at the top'''
+    anagrams_lists = []
+    for fp in anagrams:
+        anagrams_lists.append(anagrams[fp])
+    anagrams_lists.sort(key=len, reverse=True)
+
+    print "Most anagrams:"
+    for i in range(0, 5):
+        print "%s) %d" % ((i + 1), len(anagrams_lists[i])), anagrams_lists[i]
+    print "..."
+    print "\n"
+
+
+sort_anagrams(anagrams)
+
+
+def find_bingos(anagrams):
+    '''Filters mydict for keys of length 8. Sorts a list of the values
+     (lists) and sorts by length in reverse order'''
+    candidates = [anagrams[key] for key in anagrams if len(key) == 8]
+    candidates.sort(key=len, reverse=True)
+
+    print "Top Bingos:"
+    for i in range(0, 5):
+        fp = ''.join(sorted(candidates[i][0]))
+        print "%s) %d: %s" % ((i + 1), len(candidates[i]), fp), candidates[i]
+
+    print "..."
+    print "\n"
+
+find_bingos(anagrams)
+
+
+def is_metathesis(reference, test):
+    '''If two anagrams mismatch exactly twice they are metathesis pairs.
+     Caution: This function assumes strings of equal length'''
+    i = 0
+    count = 0
+    while i <= (len(reference) - 1):
+        if reference[i] != test[i]:
+            count += 1
+        i += 1
+    if count == 2:
+        return True
+    return False
+
+
+def find_metathesis(anagrams):
+    '''mydict values are lists, we use index 0 as a reference and check the
+     rest of the list (1 to end of list) against that reference word.'''
+    answer = []
+    for fp in anagrams:
+        reference = anagrams[fp][0]
+        for i in range(1, (len(anagrams[fp]) - 1)):
+            test = anagrams[fp][i]
+            if is_metathesis(reference, test):
+                answer.append([reference, test])
+
+    print("Sample of metathesis pairs:")
+    for i in range(0, 5):
+        print("%s)" % (i + 1), answer[i])
+    print("...")
+
+find_metathesis(anagrams)
 
 
 # Exercise 12.6
@@ -875,9 +974,260 @@ print('Exercise 13.5:')
 stats()
 
 # Exercise 13.6
+import string
+import random
+
+from analyze_book import *
+
+
+def subtract(d1, d2):
+    """Returns a set of all keys that appear in d1 but not d2.
+
+    d1, d2: dictionaries
+    """
+    return set(d1) - set(d2)
+
+
+if __name__ == '__main__':
+    hist = process_file('emma.txt', skip_header=True)
+    print('Total number of words:', total_words(hist))
+    print('Number of different words:', different_words(hist))
+
+    t = most_common(hist)
+    print('The most common words are:')
+    for freq, word in t[0:20]:
+        print(word, '\t', freq)
+
+    words = process_file('words.txt', skip_header=False)
+
+    diff = subtract(hist, words)
+    print("The words in the book that aren't in the word list are:")
+    for word in diff:
+        print(word)
+
+    print("\n\nHere are some random words from the book")
+    for i in range(100):
+        print(random_word(hist))
+
 # Exercise 13.7
+import string
+import random
+
+from bisect import bisect
+
+from analyze_book import *
+
+
+def random_word(hist):
+    """Chooses a random word from a histogram.
+
+    The probability of each word is proportional to its frequency.
+
+    This could be made faster by computing the cumulative frequencies
+    once and reusing them.
+    """
+    words = []
+    freqs = []
+    total_freq = 0
+
+    # make a list of words and a list of cumulative frequencies
+    for word, freq in hist.items():
+        total_freq += freq
+        words.append(word)
+        freqs.append(total_freq)
+
+    # choose a random value and find its location in the cumulative list
+    x = random.randint(0, total_freq-1)
+    index = bisect(freqs, x)
+    return words[index]
+
+
+if __name__ == '__main__':
+    hist = process_file('emma.txt', skip_header=True)
+    print('Total number of words:', total_words(hist))
+    print('Number of different words:', different_words(hist))
+
+    t = most_common(hist)
+    print('The most common words are:')
+    for freq, word in t[0:20]:
+        print(word, '\t', freq)
+
+    words = process_file('words.txt', skip_header=False)
+
+    diff = subtract(hist, words)
+    print("The words in the book that aren't in the word list are:")
+    for word in diff:
+        print(word)
+
+    print "\n\nHere are some random words from the book"
+    for i in range(100):
+        print(random_word(hist))
+
 # Exercise 13.8
+import sys
+import string
+import random
+
+# global variables
+suffix_map = {}        # map from prefixes to a list of suffixes
+prefix = ()            # current tuple of words
+
+
+def process_file(filename, order=2):
+    """Reads a file and performs Markov analysis.
+
+    filename: string
+    order: integer number of words in the prefix
+
+    Returns: map from prefix to list of possible suffixes.
+    """
+    fp = open(filename)
+    skip_gutenberg_header(fp)
+
+    for line in fp:
+        for word in line.rstrip().split():
+            process_word(word, order)
+
+
+def skip_gutenberg_header(fp):
+    """Reads from fp until it finds the line that ends the header.
+
+    fp: open file object
+    """
+    for line in fp:
+        if line.startswith('*END*THE SMALL PRINT!'):
+            break
+
+
+def process_word(word, order=2):
+    """Processes each word.
+
+    word: string
+    order: integer
+
+    During the first few iterations, all we do is store up the words;
+    after that we start adding entries to the dictionary.
+    """
+    global prefix
+    if len(prefix) < order:
+        prefix += (word,)
+        return
+
+    try:
+        suffix_map[prefix].append(word)
+    except KeyError:
+        # if there is no entry for this prefix, make one
+        suffix_map[prefix] = [word]
+
+    prefix = shift(prefix, word)
+
+
+def random_text(n=100):
+    """Generates random wordsfrom the analyzed text.
+
+    Starts with a random prefix from the dictionary.
+
+    n: number of words to generate
+    """
+    # choose a random prefix (not weighted by frequency)
+    start = random.choice(suffix_map.keys())
+
+    for i in range(n):
+        suffixes = suffix_map.get(start, None)
+        if suffixes == None:
+            # if the start isn't in map, we got to the end of the
+            # original text, so we have to start again.
+            random_text(n-i)
+            return
+
+        # choose a random suffix
+        word = random.choice(suffixes)
+        print word,
+        start = shift(start, word)
+
+
+def shift(t, word):
+    """Forms a new tuple by removing the head and adding word to the tail.
+
+    t: tuple of strings
+    word: string
+
+    Returns: tuple of strings
+    """
+    return t[1:] + (word,)
+
+
+def main(name, filename='', n=100, order=2, *args):
+    try:
+        n = int(n)
+        order = int(order)
+    except:
+        print 'Usage: randomtext.py filename [# of words] [prefix length]'
+    else:
+        process_file(filename, order)
+        random_text(n)
+
+
+if __name__ == '__main__':
+    main(*sys.argv)
+
 # Exercise 13.9
+import sys
+import string
+
+import matplotlib.pyplot as pyplot
+
+from analyze_book import *
+
+
+def rank_freq(hist):
+    """Returns a list of tuples where each tuple is a rank
+    and the number of times the item with that rank appeared.
+    """
+    # sort the list of frequencies in decreasing order
+    freqs = hist.values()
+    freqs.sort(reverse=True)
+
+    # enumerate the ranks and frequencies
+    rf = [(r+1, f) for r, f in enumerate(freqs)]
+    return rf
+
+
+def print_ranks(hist):
+    """Prints the rank vs. frequency data."""
+    for r, f in rank_freq(hist):
+        print(r, f)
+
+
+def plot_ranks(hist, scale='log'):
+    """Plots frequency vs. rank."""
+    t = rank_freq(hist)
+    rs, fs = zip(*t)
+
+    pyplot.clf()
+    pyplot.xscale(scale)
+    pyplot.yscale(scale)
+    pyplot.title('Zipf plot')
+    pyplot.xlabel('rank')
+    pyplot.ylabel('frequency')
+    pyplot.plot(rs, fs, 'r-')
+    pyplot.show()
+
+
+def main(name, filename='emma.txt', flag='plot', *args):
+    hist = process_file(filename, skip_header=True)
+
+    # either print the results or plot them
+    if flag == 'print':
+        print_ranks(hist)
+    elif flag == 'plot':
+        plot_ranks(hist)
+    else:
+        print('Usage: zipf.py filename [print|plot]')
+
+
+if __name__ == '__main__':
+    main(*sys.argv)
 
 # Exercise 14.1
 import os
@@ -1060,8 +1410,6 @@ def print_duplicates(d):
             if check_pairs(names):
                 print('And they are identical.')
 
-
-# Exercise 14.6
 
 
 # Exercise 15.1
